@@ -5,6 +5,7 @@ menor1 = math.inf
 menor2 = math.inf
 menor3 = math.inf
 contador = 0
+
 while True:
     num = float(input("Informe um número ( 0 para encerrar)"))
     print(num)
