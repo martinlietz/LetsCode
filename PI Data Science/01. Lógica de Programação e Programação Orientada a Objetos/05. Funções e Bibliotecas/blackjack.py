@@ -1,10 +1,14 @@
 import random
 
 class blackjack():
-
+    maxPontos = 0
+    blackjack = False
     def iniciarJogo(self):
         """
-        a função que vamos chamar para iniciar o jogo. Essa função não irá receber nem retornar nenhuma variável. Ela deve perguntar o número de jogadores participantes e o nome de cada um. Em seguida ela chama as outras funções do jogo.
+        A função que vamos chamar para iniciar o jogo. 
+        Essa função não recebe nem retorna nenhuma variável. 
+        Ela pergunta o número de jogadores participantes e o nome de cada um.
+         Em seguida ela chama as outras funções do jogo.
         """
         self.nJogadores = int(input("Quantos jogadores terá? "))
         i = 0
@@ -12,13 +16,31 @@ class blackjack():
         while i < self.nJogadores:
             i+=1
             nome = str(input(f"Diga o nome do jogador {i}: "))
-            self.jogadores.append({"nome":nome, "cartas":(), "Ativo": True})
+            self.jogadores.append({"nome":nome, "cartas":[], "ativo": True, "ganhador":False, "pontos":0})
         self.criarBaralho()
-        #  self.sorteio()
-        
+        while (self.blackjack == False):
+            for n in self.jogadores:
+                self.jogada(n['nome'])
+            # Tem mais gente no jogo?          
+            ativos = next((x for x in self.jogadores if x['ativo'] == True), None)
+            if(ativos is None or self.blackjack == True):
+                #  Se todos os jogadores estão inativos, ou alguem acertou blackjack vamos encerrar.
+                break
+
+         # Quem ganhou/perdeu?
+        self.verifica()
+        for e in self.jogadores:
+            if e['ganhador'] == True:
+                
+                print(f"Jogador {e['nome']} está com {e['pontos']} pontos e ganhou!!!")
+            else:
+                if e['pontos'] > 21:
+                    print(f"Jogador {e['nome']} está com {e['pontos']} e passou 21  pontos e perdeu!")
+                else:
+                    print(f"Jogador {e['nome']} está com {e['pontos']} mas perdeu!")
 
     def criarBaralho(self):
-        """essa função deve criar um baralho (uma lista) com as cartas do baralho."""
+        """Essa função criar um baralho (uma lista) com as cartas do baralho."""
         self.baralho = [ {"naipe":"Paus", "nome":'Ás', 'valor': 1 },
             { "naipe":"Paus", "nome":'2', 'valor': 2 },
             { "naipe":"Paus", "nome":'3', 'valor': 3 },
@@ -74,7 +96,7 @@ class blackjack():
         ]
 
     def jogada(self, nome):
-        """essa função deve receber o nome do jogador que irá realizar a jogada e, 
+        """Essa função recebe o nome do jogador que irá realizar a jogada e, 
         caso ele ainda esteja ativo (tenha menos de 21 pontos e ainda não tenha desistido de comprar cartas) 
         deve perguntar se ele quer comprar uma carta. Se ele responder que sim, 
         a função deve chamar a próxima função para sortear uma carta e somar o valor retornado na pontuação do jogador; 
@@ -83,30 +105,53 @@ class blackjack():
         """
         jogador = next((x for x in self.jogadores if x['nome'] == nome), None)
         if (jogador is not None):
-            querumaCarta = str(input("Quer uma carta? ('sim'/'nao') "))
-            
-            if(querumaCarta.lower()[0] == 's' and jogador['ativo'] == True):
-                cartanova = self.sorteio()
-                jogador['cartas'].append(cartanova)
+            if(jogador['ativo'] == True):
+                querumaCarta = str(input(f"Quer mais uma carta {nome}? ('sim'/'nao') "))
+                
+                if(querumaCarta.lower()[0] == 's' and jogador['ativo'] == True):
+                    cartanova = self.sorteio()
+                    jogador['cartas'].append(cartanova)
+                else:
+                    jogador['ativo'] = False
                 self.verifica()
-
         else:
             print(f"{nome} não esta na rodada, participa da proxima!")
 
     def sorteio(self):
         """essa função retira uma carta aleatória do baralho e retorna o número de pontos que essa carta vale."""
         cartaEscolhida=random.choice(self.baralho)
+        print(f"Voce tirou carta {cartaEscolhida['nome']} de {cartaEscolhida['naipe']} ")
         self.baralho.remove(cartaEscolhida)
         return cartaEscolhida
 
     def verifica(self):
         """verifica e indica qual/quais jogador/jogadores tem o maior número de pontos, que seja menor ou igual a 21."""
+        self.maxPontos = 0
         for e in self.jogadores:
             valores = [ e['valor'] for e in e['cartas'] ]
-            if (sum(valores) > 21):
-                e.Ativo = False
+            e['pontos'] = sum(valores)
+            if (e['pontos'] > 21):
+                # Perdeu ja
+                #  print(f"Jogador {e['nome']} está com {sum(valores)} e passou 21  pontos e perdeu!")
+                e['ativo'] = False
+                e['ganhador'] = False
+            elif(e['pontos'] == 21):
+                # Acertou
+                self.maxPontos = 21
+                self.blackjack = True
+                print(f"Jogador {e['nome']} Blackjack!!!!")
+                e['ganhador'] = True
+            else:
+                if e['pontos'] >= self.maxPontos:
+                    self.maxPontos = e['pontos']
+        
+        for e in self.jogadores:
+            if (e['pontos'] == self.maxPontos):
+                e['ganhador'] = True
+            else:
+                e['ganhador'] = False
+            
 
 if __name__ == "__main__":
     b = blackjack()
     b.iniciarJogo()
-    b.jogada('Martin')
