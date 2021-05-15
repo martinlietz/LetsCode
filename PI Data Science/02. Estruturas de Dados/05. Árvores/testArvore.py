@@ -68,3 +68,27 @@ def buscaNome2(nome, arvore):
 
 
 print(buscaNome2("Gustavo", t1))
+
+
+
+
+my_tree = Arvore("Headphone",
+                 sim = Arvore("Bluetooth",
+                                  sim = Arvore("JBL T600 BT"),
+                                  nao = Arvore("USB",
+                                                   sim = Arvore("Logitech H390"),
+                                                   nao = Arvore("Sony MDR-ZX110"))),
+                 nao = Arvore("Intra-auricular",
+                                 sim = Arvore("Bluetooth", 
+                                                    sim = Arvore("JBL T600 BT"),
+                                                    nao = Arvore("USB")),
+                                 nao = Arvore("Bluetooth",
+                                                    sim = Arvore("JBL T600 BT"),
+                                                    nao = Arvore("USB")
+                                              )))
+
+                                              def __repr__(self):
+
+        return "{}".format(self)
+
+    
