@@ -1,0 +1,811 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Parte 2: Pandas\n",
+    "\n",
+    "Nesta parte começaremos a lidar com a biblioteca `pandas`. Essa biblioteca fornece ferramentas poderosas para lidar com estruturas relacionais de dados e performar análises sobre esses dados. A documentação completa da biblioteca pode ser encontrada em \n",
+    "\n",
+    "> https://pandas.pydata.org/pandas-docs/version/0.23.4/index.html\n",
+    "\n",
+    "A estrutura dessa parte será análoga à primeira:\n",
+    " - Importando as bibliotecas;\n",
+    " - Overview de `pd.Series` e `pd.DataFrame`;\n",
+    " - Cirando `pd.Series` e `pd.DataFrame`;\n",
+    " - Indexação e Slicing: métodos `.loc` e `.iloc`;\n",
+    " - Concatenações; e\n",
+    " - Multi indexação;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Instalando as bibliotecas e baixando os arquivos necessários\n",
+    "\n",
+    "Instale as bibliotecas `pandas` e `xlrd` (que permite importar arquivos do excel)\n",
+    "> `pip install pandas xlrd`\n",
+    "\n",
+    "Crie uma pasta para a aula de hoje, pode ser `aula_2`. No slack, baixe o arquivo `imoveis_do_rio_de_janeiro.csv`, `tips.csv`  e `imoveis_sp.csv` e depois execute o jupiter a partir dessa pasta: `cd \"Caminho-para-pasta\"` e depois `jupyter notebook`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Importando as bibliotecas\n",
+    "\n",
+    "Sempre importe as bibliotecas que serão usadas. No caso, usaremos duas por enquanto: `pandas` e `numpy`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Series e DataFrames\n",
+    "Dê maneira simples um Dataframe do Pandas será o análogo à uma planilha do Excel, e uma série será uma coluna desse DataFrame. O comportamento das séries são muito parecido com os das listas do numpy, com a vantagem de possuirem um processo de indexação mais avançado e próprio para lidar com dados gerais.\n",
+    "\n",
+    "### Séries \n",
+    "Uma das formas de criar uma série é com a função `pd.Series()`:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Criando uma série a partir de uma lista do python\n",
+    "lista = [i**2 for i in range(10)]\n",
+    "serie = pd.Series(lista)\n",
+    "print(serie)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A função `pd.serie` pode receber outras estruturas de dados além da numérica: No exemplo abaixo, construiremos uma série com nomes (`string`)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Criando uma série a partir de uma lista de strings\n",
+    "nomes = ['Capitu', 'Bentinho', 'José Dias', 'Escobar']\n",
+    "serie = pd.Series(nomes)\n",
+    "print(serie)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Como foi dito acima, a vantagem das `pd.Series` está na indexação, que é otimizada para lidar com dados diversos. Em vez da indexação numérica usual, usaremos no exemplo abaixo uma indexação por string. Para isso, usaremos o parâmetro `index` da função `pd.Series` para cirar uma indexação para outra lista que será passada pelo parâmetro `data`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Indexação de uma série por string\n",
+    "nomes = ['Capitu', 'Bentinho', 'José Dias', 'Escobar']\n",
+    "lista = [3, 5, 7, 0]\n",
+    "serie = pd.Series(data=lista,index=nomes)\n",
+    "print(serie)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "O acesso à um elemento ou o recorte simples de uma série pode ser feito de maneira análoga à das listas do numpy, com a vantagem de estar adaptado aos índices diversos."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie['Capitu':'José Dias']\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie['Escobar']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie[0:3]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "No entanto, ao contrário das listas, `serie[index1:index2]` fornece o recorte da série a partir do `index1` até o `index2`, __inclusive__.\n",
+    "\n",
+    "Uma série pode ser criado a partir de um dicionário:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Criando séries a partir de dicionários\n",
+    "dicionario = {'Capitu':10,'Bentinho':20,'José dias':30, 'Escobar':15}\n",
+    "pd.Series(dicionario)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Muitas vezes, ao lidar com dados, virão células que não possuem dados nenhum ou listas vazias. Nesses casos, a biblioteca numpy fornece uma constante `np.nan` que será útil para lidar com dados ausentes."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Um dos valores vazio\n",
+    "dicionario = {'Janeiro':5, 'Fevereiro':4.7, 'Março':None, 'Abril':9}\n",
+    "serie = pd.Series(dicionario)\n",
+    "serie"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "serie[0:3]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Operações com séries"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lista1 = np.arange(0,5,1)\n",
+    "lista2 = np.arange(3,15,3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lista1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lista2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie1 = pd.Series(data=lista1)\n",
+    "serie2 = pd.Series(data=lista2)\n",
+    "serie1+serie2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "5*serie1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "5**serie1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie1*serie2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie1 = pd.Series(data=lista1, index=['Segunda','Terça','Quarta','Quinta','Sexta'])\n",
+    "serie2 = pd.Series(data=lista2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "serie1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "serie1+serie2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### DataFrames\n",
+    "\n",
+    "Veremos agora a estrutura mais importante do curso: o __DataFrame__. De maneira simples, Dataframe são uma coleção de várias séries como colunas; a vantagem aqui é que podemos indexar as colunas também.\n",
+    "\n",
+    "DataFrames podem ser construídos a partir de listas, matrizes ou podem ser importados de arquivos `.csv` ou `.XLSX`. Começaremos com os mais simples: construir DataFrames a partir de listas e matrizes. Para isso, usaremos a função `pd.DataFrame`; os principais parâmetros dessa função são `data` (que ira passar os dados do dataframe), `index` (uma lista que dará o nome às linhas desse dataframe) e `columns` (que dará o nome às colunas desse dataframe)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Criando uma matriz no numpy:\n",
+    "matriz = np.array([[0,1,2],[3,4,5],[6,7,8]])\n",
+    "index = ['Janeiro', 'Fevereiro', 'Março']\n",
+    "colunas = ['Capitu', 'Bentinho', 'Escobar']\n",
+    "df = pd.DataFrame(data=matriz,index=index,columns=colunas)\n",
+    "print(df)\n",
+    "df # aqui está uma das vantagens do Jupyter!"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para acessar os valores deveremos especificar a coluna e a linha, __nessa ordem__:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Acessando o dado armazenado na coluna 'Escobar' e na linha 'Fevereiro':\n",
+    "print(df['Escobar']['Fevereiro'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Não se pode acessar os dados através de índices numéricos: no caso acima, a coluna `Escobar` corresponde a coluna de número 2 e a linha `Fevereiro` é a linha de número 1."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "# O dado armazenado na coluna 'Escobar' e na linha 'Fevereiro' com índices numéricos:\n",
+    "df[2][1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Veremos adiante os métodos `.loc` e `.iloc` que facilitaram todas as operações de acesso e recorte para dataframes."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "O método que iremos mais usar para a criação de dataframes é o de importação; a importação de dados pode ser feita através da leitura de arquivos locais ou até mesmo acessar databases externos. Hoje nos concentraremos com arquivos locais. Dois dos possíveis métodos de importação é feito pela função `pd.read_csv()` que constrói dataframes a partir de um arquivo `.csv`, e `pd.read_excel()`. \n",
+    "\n",
+    "No exemplo abaixo usaremos a função `pd.read_csv()`. Essa função importa arquivos `.csv` para o formato dataframe do pandas. Os principais parâmetros dessa função são:\n",
+    " - `filepath_or_buffer`: `string` que passa o nome do arquivo, o caminho ou a url do arquivo;\n",
+    " - `sep`: `string` que passa o separador do arquivo; como padrão é `','`\n",
+    " - `header`: `int` ou `None` que indica qual o número da linha que deve ser usada como nome para as colunas;\n",
+    " - `names`: lista que passa a indexação das colunas caso `header=None`;\n",
+    " - `index_col`: `int` que passa qual das colunas deve ser usadas como indexação das linhas; o padrão é indexar pelo tamanho do dataframe\n",
+    " - `dtype`: passa o tipo de dados que o dataframe contem;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Usando a função pd.read_csv() para importar um dataframe:\n",
+    "imoveis = pd.read_csv('imoveis_Rio_de_Janeiro.csv', sep = ';') \n",
+    "imoveis.head() # o método .head() imprime um recorte inicial do dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.loc[:,'bairro':'preco']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "df # o método .reset_index() não salva a alteração"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "quartos = imoveis.quartos  # retorna uma série\n",
+    "quartos.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Exercícios"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "__Exercício 1:__ a função `np.random.rand(l,c)` cria uma matrix de $l$ linhas e $c$ colunas cujas entradas são números aleatórios do intervalo $[0,1[$ e obedecem uma distribuição uniforme. Use essa função para criar uma dataframe de 5 linhas e 3 colunas cuja indexação das linhas `[janeiro, Fevereiro, Março, Abril, Maio]` e a indexação das colunas é `[João, Natália, José]`.   "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "__Exercício 2:__ Analise o arquivo `tips.csv` e construa um dataframe no pandas com os dados desse arquivo especificando a coluna que indexará as linhas e a linha que indexará as colunas."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "__Exercício 3__ Separe as colunas `somker` e `size` do dataframe anterior em séries do pandas diferentes."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Condicionais\n",
+    "\n",
+    "Analogamente ao que foi feito com listas do numpy, é possível gerar uma lista de valores booleanos (`True` ou `False`) para um determinada condição aplicado a uma série ou a um dataframe. O dataframe gerado possui, por padrão, a mesma indexação do dataframe original."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "condicional = quartos_df > 3 # retorna um dataframe\n",
+    "condicional.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "condicional = (imoveis.quartos < 4) & (imoveis.quartos> 1)\n",
+    "condicional.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Exercícios"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "__Exercício:__ Use o método `.mean()` do dataframe para calcular a média de preços por metro quadrado."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "__Exercício Guiado:__ Crie um dataframe que armazene a média de preço por metro quadrado de cada bairro."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Indexação e Slicing: métodos .loc e .iloc\n",
+    "\n",
+    "O Pandas possui métodos `.loc[]` e `.iloc[]` para o acesso e recorte de informação a partir de uma lista de índices ou uma lista booleana de um condicional.\n",
+    "\n",
+    " - `.loc[linha(s),colunas(s)]`:  Usaremos para seleção ou recorte baseado no nome da coluna ou da linha. Retorna uma série ou um dataframe que satisfaz baseado em indexação; a indexação pode ser uma lista ou a condição booleana:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "imoveis.loc[0] # retornará uma série correspondente à linha 0 "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.loc[0:10] # retorna um recorte do dataframe entre as linhas 0-10 (inclusive)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.loc[[0,4,7,9]] # retorna um recorte do dataframe correspondente às linhas 0,4,7 e 9"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "imoveis.loc[imoveis.quartos > 2].head() # retorna um recorte do dataframe que satisfaz a condição nº quartos > 2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.loc[[0,1,4,7],['condominio','pm2']]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "__Exercício 4:__ Use o médoto `.index` para obter uma lista numpy que contem os índices do dataframe `imoveis`. Esse método retorna um objeto do tipo `pandas.core.indexes.range.RangeIndex`, que é uma lista usada para lidar com índices no pandas e que pode ser convertido para uma lista do numpy através da função `np.array()`. Forneca um recorte do dataframe `imoveis` que tenha apenas as linhas pares."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    " - `.iloc[linha(s),coluna(s)]`: O `iloc` é um método para selecionar ou recortar dataframes baseado na posição. Pode receber tanto índices, lista de índices ou condições booleanas."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.iloc[0] # retorna uma série cujos elementos são o da primeira linha de imoveis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.iloc[:3] # retorna um dataframe contendo as 3 primeiras linhas de imoveis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.iloc[:3,:4] # retorna as 3 primeiras linhas e as 4 primeiras colunas de imoveis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.iloc[:4,[1,2,4]] # retorna as 4 primeiras linhas e as colunas de número 1,2 e 4 de imoveis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.iloc[3,4] # retorna o o elemento da célula da linha 3 com a coluna 4 de imoveis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "imoveis.iloc[imoveis.quartos>1, [3,4]] # .iloc não suporta indexação booleana"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Concatenação\n",
+    "\n",
+    "Concatenação é um processos de construir novos dataframes a partir de dois ou mais dataframes concatenando ambos. Nesse processo deve se atentar às dimensões dos dataframes envolvidos. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "lista1 = np.array([i for i in range(5)])\n",
+    "lista2 = lista1 ** 2\n",
+    "lista3 = lista1 ** 2\n",
+    "df_pol = pd.DataFrame([lista2,lista3], index=['Quadrado','Cubo'])\n",
+    "df_pol"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lista1 = np.array([i for i in range(5)])\n",
+    "listasin = np.sin(lista1)\n",
+    "listacos = np.cos(lista1)\n",
+    "df_trig = pd.DataFrame([listasin,listacos],index=['seno','cos'])\n",
+    "df_trig"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "listaframes = [df_pol,df_trig] # a ordem é importante\n",
+    "df_fun = pd.concat(listaframes) \n",
+    "df_fun"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Também é possível realizar a concatenação com o método `.append()`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_fun = df_pol.append(df_trig) # aqui a ordem também é importante\n",
+    "df_fun"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Caso a indexação de ambos os dataframes possuam elementos em comum, é necessário trocar a indexação"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "matrix1 = np.random.rand(3,4)\n",
+    "matrix2 = np.random.rand(3,4)\n",
+    "df1 = pd.DataFrame(data=matrix1)\n",
+    "df2 = pd.DataFrame(data=matrix2)\n",
+    "df = df1.append(df2)\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para concertar a indexação, usaremos o método `.reset_index()` para dataframe. Por default, esse método transforma a indexação antiga em uma nova coluna. Para isso não acontecer, usa-se o parâmetro `drop=True`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Multindexação\n",
+    "\n",
+    "É possível adicionar categorias aos índices."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_fun"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "index = [['Polinomial', 'Polinomial','Trigonometrica', 'Trigonometrica'],\n",
+    "                     ['Quadrado','Cubo', 'Seno','Cosseno']]\n",
+    "df_fun.index = index\n",
+    "df_fun"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_fun.loc[('Polinomial','Quadrado')]"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

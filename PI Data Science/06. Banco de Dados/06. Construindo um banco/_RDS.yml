@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Banco de Dados Postgres - RDS
+
+##############################
+#        Parameters          #
+##############################
+Parameters:
+  RDSName:
+    Description: Nome do BD
+    Type: String
+    Default: letscode
+  MasterName:
+    Description: Nome do Usuario do Banco
+    Type: String
+    Default: letscode
+  MasterUserPassword:
+    Description: Senha do Usuario do BD
+    Type: String
+    Default: bdsenhaletscode
+  RDSInstanceType:
+    Description: Tipo do RDS
+    Type: String
+    Default: db.t2.micro
+  Engine:
+    Description: Tipo de SGBD/DBMS
+    Type: String
+    Default: postgres
+  EngineVersion:
+    Description: Versao de SGBD/DBMS
+    Type: String
+    Default: "12.5"
+  DBAlocatedStorage:
+    Description: Storage do BD
+    Type: Number
+    Default: 20
+  StorageType:
+    Description: Tipo de armazenamento do storage
+    Type: String
+    Default: gp2
+  MultiAZ:
+    Description: Alta disponibilidade
+    Type: String
+    Default: 'false'
+  BkpRetentionPeriod:
+    Description: Periodo de retencao de BKP
+    Type: Number
+    Default: 0
+
+##############################
+#        Resources          #
+##############################
+Resources:
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: !Ref DBAlocatedStorage
+      StorageType: !Ref StorageType
+      DBInstanceClass: !Ref RDSInstanceType
+      Engine: !Ref Engine
+      EngineVersion: !Ref EngineVersion
+      MasterUsername: !Ref MasterName
+      MasterUserPassword: !Ref MasterUserPassword
+      DBInstanceIdentifier: !Ref RDSName
+      DBName: !Ref RDSName
+      MultiAZ: !Ref MultiAZ
+      PubliclyAccessible: true
+      StorageEncrypted: false
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: !Ref BkpRetentionPeriod
