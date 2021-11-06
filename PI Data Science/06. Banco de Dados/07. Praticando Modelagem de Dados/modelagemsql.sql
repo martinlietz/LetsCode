@@ -2,12 +2,13 @@
 
 
 CREATE TABLE tb_cliente (
+    idCliente SERIAL,
     cpf INT NOT NULL,
     nome VARCHAR(250) NOT NULL,
     endereco VARCHAR(1000) NOT NULL,
     telefone VARCHAR(50) NOT NULL,
     email VARCHAR(150) NOT NULL,
-    PRIMARY KEY (cpf)
+    PRIMARY KEY (idCliente)
 );
 
 CREATE TABLE tb_editor (
@@ -31,14 +32,14 @@ CREATE TABLE tb_livro (
 
 
 CREATE TABLE tb_livros_Clientes (
-    cpf INT NOT NULL,
+    idCliente INT NOT NULL,
     isbn INT NOT NULL,
-    PRIMARY KEY (cpf, isbn),
-    CONSTRAINT fk_cliente FOREIGN KEY (cpf) REFERENCES tb_cliente (cpf),
+    PRIMARY KEY (idCliente, isbn),
+    CONSTRAINT fk_cliente FOREIGN KEY (idCliente) REFERENCES tb_cliente (idCliente),
     CONSTRAINT fk_livro FOREIGN KEY (isbn) REFERENCES tb_livro (isbn)
 );
 
 DROP TABLE tb_livros_Clientes;
+DROP TABLE tb_livro;
 DROP TABLE tb_editor;
 DROP TABLE tb_cliente;
-DROP TABLE tb_livro;

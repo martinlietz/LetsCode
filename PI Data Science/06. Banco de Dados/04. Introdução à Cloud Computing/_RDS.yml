@@ -16,7 +16,7 @@ Parameters:
   MasterUserPassword:
     Description: Senha do Usuario do BD
     Type: String
-    Default: bdsenhaletscode
+    Default:     ttttttt0p
   RDSInstanceType:
     Description: Tipo do RDS
     Type: String
