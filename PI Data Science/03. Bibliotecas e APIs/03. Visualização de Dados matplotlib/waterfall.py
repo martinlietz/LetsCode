@@ -74,4 +74,4 @@ my_plot.set_ylim(0, blank.max()+int(plot_offset))
 # Rotate the labels
 my_plot.set_xticklabels(trans.index, rotation=0)
 my_plot.show()
-my_plot.get_figure().savefig("waterfall.png", dpi=200, bbox_inches='tight')
+#my_plot.get_figure().savefig("waterfall.png", dpi=200, bbox_inches='tight')
