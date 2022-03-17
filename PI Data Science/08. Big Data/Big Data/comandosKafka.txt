@@ -1,0 +1,18 @@
+download kafka 2.8
+
+
+zookeeper-server-start.bat "C:\APP\kafka_2.12-2.8.0\config\zookeeper.properties"
+zookeeper-server-start.bat C:\APP\kafka_2.12-2.8.0\config\zookeeper.properties
+
+kafka-server-start.bat C:\APP\kafka_2.12-2.8.0\config\server.properties
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic teste
+
+kafka-topics --bootstrap-server localhost:9092 --list
+
+kafka-console-consumer.bat  --bootstrap-server localhost:9092 --topic teste
+
+kafka-console-consumer.bat  --bootstrap-server localhost:9092 --topic teste --from-beginning
+
+kafka-console-producer --broker-list localhost:9092 --topic teste
+

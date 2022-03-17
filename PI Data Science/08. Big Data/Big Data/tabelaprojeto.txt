@@ -1,0 +1,42 @@
+CREATE TABLE IF NOT EXISTS projeto.resultados (
+date date,
+home_team string,
+away_team string,
+home_score int,
+away_score int,
+tournament string,
+city string,
+country string,
+neutral boolean
+ )
+ COMMENT 'Tabela projeto big data lets code'
+ ROW FORMAT DELIMITED
+ FIELDS TERMINATED BY ',';
+ 
+ 
+ 
+ CREATE TABLE projeto.resultados (
+	  date date,
+      home_team string,
+      away_team string,
+      home_score int,
+      away_score int,
+      tournament string,
+      city string,
+      country string,
+    neutral boolean)
+	ROW FORMAT SERDE 
+	  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe' 
+	STORED AS INPUTFORMAT 
+	  'org.apache.hadoop.mapred.TextInputFormat' 
+	OUTPUTFORMAT 
+	  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+	LOCATION
+	  'hdfs://quickstart.cloudera:8020/user/hive/projeto/results.csv'
+	TBLPROPERTIES (
+	  'COLUMN_STATS_ACCURATE'='true', 
+	  'numFiles'='1', 
+	  'numRows'='0', 
+	  'rawDataSize'='0', 
+	  'totalSize'='11', 
+	  'transient_lastDdlTime'='1644279007')
